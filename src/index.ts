@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-import 'dotenv/config';
+import dotenv from 'dotenv';
 import { Command } from 'commander';
-import { writeFileSync, unlinkSync } from 'fs';
+import { writeFileSync, unlinkSync, existsSync } from 'fs';
 import { execSync } from 'child_process';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
@@ -10,7 +10,15 @@ import { tmpdir } from 'os';
 import { join } from 'path';
 import { getStagedDiff } from './git.js';
 import { generateMessageFromDiff } from './ai.js';
-import { loadConfig } from './config.js';
+import { loadConfig, findGitRoot } from './config.js';
+
+const gitRoot = findGitRoot();
+if (gitRoot) {
+  const envPath = join(gitRoot, '.env');
+  if (existsSync(envPath)) {
+    dotenv.config({ path: envPath });
+  }
+}
 
 const program = new Command();
 

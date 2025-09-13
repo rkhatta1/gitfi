@@ -1,51 +1,68 @@
 import { readFileSync, existsSync } from 'fs';
-import * as path from 'path';
+import { join, dirname } from 'path';
+import { homedir } from 'os';
 
-// TypeScript Hint: We define a 'shape' for our configuration object.
-// The `mode` can only be one of two specific strings. This is called a union type.
 export interface Config {
-  mode: 'hook' | 'interactive';
+  apiKey?: string;
 }
 
-// This is our default setting if the config file is missing or invalid.
-const defaultConfig: Config = {
-  mode: 'hook',
-};
-
-export function loadConfig(): Config {
-  // --- YOUR TASK (1) ---
-  // Find the root of the current Git repository. A common way to do this is
-  // to look for a `.git` directory, starting from the current folder and
-  // moving up to parent directories. For now, we can simplify and assume
-  // the config file is in the current working directory.
-  const configPath = path.join(process.cwd(), '.gitfi.conf');
-
-  if (!existsSync(configPath)) {
-    console.log('No .gitfi.conf file found, using default settings.');
-    return defaultConfig;
+/**
+ * Searches upwards from the current directory to find the root of the Git repository.
+ * @returns The path to the Git root, or null if not found.
+ */
+export function findGitRoot(): string | null {
+  let currentPath = process.cwd();
+  while (currentPath !== dirname(currentPath)) {
+    if (existsSync(join(currentPath, '.git'))) {
+      return currentPath;
+    }
+    currentPath = dirname(currentPath);
   }
+  return null;
+}
 
-  // --- YOUR TASK (2) ---
-  // Read the content of the config file using `readFileSync`.
-  // Remember to specify the encoding, like 'utf-8'.
-  const fileContent = readFileSync(configPath, 'utf-8');
+/**
+ * Parses a config file's content for an API key.
+ * @param content The string content of the .gitfi.conf file.
+ * @returns A partial Config object.
+ */
+function parseConfigFile(content: string): Partial<Config> {
+  const config: Partial<Config> = {};
+  const lines = content.split('\n');
 
-  // --- YOUR TASK (3) ---
-  // Parse the file content. We're using a simple `KEY=VALUE` format.
-  // Split the content by lines and look for a line that starts with `MODE=`.
-  // Extract the value ('hook' or 'interactive').
-  // If you find a valid mode, return a new config object with it.
-  // Otherwise, return the `defaultConfig`.
-  //...
-  const lines = fileContent.split('\n');
   for (const line of lines) {
-    if (line.startsWith("MODE=")) {
-      const value = line.split("=")[1]?.trim();
-      if (value === "hook" || value === "interactive") {
-        return { mode: value };
+    if (line.startsWith('API_KEY=')) {
+      const value = line.split('=')[1]?.trim();
+      if (value) {
+        config.apiKey = value;
       }
     }
   }
+  return config;
+}
 
-  return defaultConfig; // Return default if parsing fails
+export function loadConfig(): Config {
+  const gitRoot = findGitRoot();
+
+  // Determine platform-specific global config file path
+  const globalConfigDir = process.platform === 'darwin' 
+    ? join(homedir(), 'Library', 'Preferences', 'gitfi') // macOS path
+    : join(homedir(), '.config', 'gitfi'); // Linux/default path
+  
+  const globalConfigPath = join(globalConfigDir, '.gitfi.conf');
+  const localConfigPath = gitRoot ? join(gitRoot, '.gitfi.conf') : null;
+
+  let globalConfig: Partial<Config> = {};
+  if (existsSync(globalConfigPath)) {
+    const content = readFileSync(globalConfigPath, 'utf-8');
+    globalConfig = parseConfigFile(content);
+  }
+
+  let localConfig: Partial<Config> = {};
+  if (localConfigPath && existsSync(localConfigPath)) {
+    const content = readFileSync(localConfigPath, 'utf-8');
+    localConfig = parseConfigFile(content);
+  }
+  
+  return { ...globalConfig, ...localConfig };
 }

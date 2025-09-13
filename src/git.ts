@@ -5,11 +5,8 @@ import { execSync } from 'child_process';
  * @returns The diff text as a string.
  */
 export function getStagedDiff(): string {
-  // TypeScript Hint: The ': string' after the function name is a return type annotation.
-  // It guarantees that this function will always return a string.
   const command = "git diff --staged";
-  // --- YOUR CODE HERE (5) ---
-  // Use 'execSync' to run the git command. The command you want is 'git diff --staged'.
+
   try {
     const diff = execSync(command).toString();
     return diff;

@@ -10,6 +10,4 @@
 
 # Environment
 .env
-
-# Logs
-gitfi-error.log
+.gitfi.conf

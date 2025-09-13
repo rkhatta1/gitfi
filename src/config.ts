@@ -31,7 +31,7 @@ function parseConfigFile(content: string): Partial<Config> {
   const lines = content.split('\n');
 
   for (const line of lines) {
-    if (line.startsWith('API_KEY=')) {
+    if (line.startsWith('GEMINI_API_KEY=')) {
       const value = line.split('=')[1]?.trim();
       if (value) {
         config.apiKey = value;

@@ -47,7 +47,7 @@ export async function generateMessageFromDiff(diffText: string): Promise<string>
   }
   const apiKey = getApiKey(); 
 
-  const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+  const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
   const prompt = `
     Analyze the following code changes and generate a concise Git commit message.

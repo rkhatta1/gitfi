@@ -2,10 +2,12 @@
 
 import 'dotenv/config';
 import { Command } from 'commander';
-import { writeFileSync } from 'fs';
+import { writeFileSync, unlinkSync } from 'fs';
 import { execSync } from 'child_process';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
+import { tmpdir } from 'os';
+import { join } from 'path';
 import { getStagedDiff } from './git.js';
 import { generateMessageFromDiff } from './ai.js';
 import { loadConfig } from './config.js';
@@ -84,7 +86,16 @@ program
             console.log(chalk.green('✓ Changes committed successfully!'));
             break;
           case "edit":
-            console.log(chalk.blue('Yet to implement.'));
+            const tempFilepath = join(tmpdir(), `gitfi-commit-msg.txt`);
+            writeFileSync(tempFilepath, commitMessage);
+            
+            console.log(chalk.yellow('Save and Close the file to commit with the edited commit message.'))
+            try {
+              execSync(`git commit --template ${tempFilepath}`, { stdio: 'inherit' });
+            } finally {
+              unlinkSync(tempFilepath);
+            }
+            console.log(chalk.green('✓ Changes committed successfully!'));
             break;
           case "cancel":
             console.log(chalk.red('Cancelled commit.'));

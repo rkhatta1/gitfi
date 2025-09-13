@@ -42,6 +42,9 @@ function getApiKey(): string {
  * @returns A promise that resolves to the generated commit message string.
  */
 export async function generateMessageFromDiff(diffText: string): Promise<string> {
+  if (process.env.VITEST_MOCK_AI === 'true') {
+    return 'test: create a new feature';
+  }
   const apiKey = getApiKey(); 
 
   const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;

@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { loadConfig } from './config.js';
-import chalk from 'chalk';
 
 interface GeminiResponse {
   candidates: {
@@ -67,8 +66,6 @@ export async function generateMessageFromDiff(diffText: string): Promise<string>
     ${diffText}
     ---
   `;
-  
-  console.log(chalk.blue(`The prompt being used: ${prompt}`));
   
   const response = await axios.post<GeminiResponse>(API_URL, {
     contents: [{ parts: [{ text: prompt }] }],

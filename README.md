@@ -13,3 +13,60 @@
 </div>
 
 -----
+
+```gitfi``` is a simple command-line tool that uses Google's Gemini to automatically generate a descriptive commit message based on your staged Git changes.
+
+## Installation
+
+```bash
+npm install -g gitfi
+```
+
+## Configuration
+
+Before you can use ```gitfi```, you need to provide your Gemini API key. The tool will look for the key in the following order:
+
+1.  A `.env` file in your project's root (`GEMINI_API_KEY=...`).
+2.  A global config file at `~/.config/gitfi/.gitfi.conf` (Linux) or `~/Library/Preferences/gitfi/.gitfi.conf` (macOS).
+3.  A local `.gitfi.conf` file in your project's root.
+
+Your config file can contain any of these settings:
+
+```ini
+# Your Gemini API Key (required)
+GEMINI_API_KEY=your_secret_api_key_here
+
+# Optional: Specify a different Gemini model
+GEMINI_MODEL=gemini-2.0-flash
+
+# Optional: Provide a completely custom prompt.
+PROMPT=You are a pirate. Write a commit message for this treasure map:
+```
+
+*Note: The `.env` file uses the same variable names.*
+
+## Usage
+
+After staging your files with `git add`, you have two ways to use `gitfi`.
+
+#### Interactive Mode (For when you're feeling cautious)
+
+Run the `gen` command to have the AI generate a message and present you with options to commit, edit, or cancel.
+
+```bash
+gitfi gen
+
+# or the alias
+gitfi g
+```
+
+#### Direct Commit Mode (For when you're feeling confident)
+
+Run the `commit` command to have the AI generate a message and commit the changes instantly.
+
+```bash
+gitfi commit
+
+# or the alias
+gitfi c
+```

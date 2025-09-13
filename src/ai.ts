@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { loadConfig } from './config.js';
+import chalk from 'chalk';
 
 interface GeminiResponse {
   candidates: {
@@ -36,6 +37,12 @@ function getApiKey(): string {
   );
 }
 
+const defaultPrompt = `
+    Analyze the following code changes and generate a concise Git commit message. The message must follow the Conventional Commits specification and should be conversational. Emphasis on concise.
+    Format: <type>[optional scope]: <description>
+    Do not include any introductory text, just the commit message itself.
+`
+
 /**
  * Sends a diff to the Gemini API and returns a commit message.
  * @param diffText The git diff to be summarized.
@@ -46,21 +53,23 @@ export async function generateMessageFromDiff(diffText: string): Promise<string>
     return 'test: create a new feature';
   }
   const apiKey = getApiKey(); 
+  const config = loadConfig();
 
-  const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+  const model = process.env.GEMINI_MODEL || config.geminiModel || 'gemini-2.0-flash';
+  const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
+  const promptInstructions = process.env.PROMPT || config.prompt || defaultPrompt;
   const prompt = `
-    Analyze the following code changes and generate a concise Git commit message.
-    The message must follow the Conventional Commits specification and should be conversational. Emphasis on concise.
-    Format: <type>[optional scope]: <description>
-    Do not include any introductory text, just the commit message itself.
+    ${promptInstructions}
 
     Diff:
     ---
     ${diffText}
     ---
   `;
-
+  
+  console.log(chalk.blue(`The prompt being used: ${prompt}`));
+  
   const response = await axios.post<GeminiResponse>(API_URL, {
     contents: [{ parts: [{ text: prompt }] }],
   });

@@ -4,6 +4,8 @@ import { homedir } from 'os';
 
 export interface Config {
   apiKey?: string;
+  prompt?: string;
+  geminiModel?: string;
 }
 
 /**
@@ -32,10 +34,11 @@ function parseConfigFile(content: string): Partial<Config> {
 
   for (const line of lines) {
     if (line.startsWith('GEMINI_API_KEY=')) {
-      const value = line.split('=')[1]?.trim();
-      if (value) {
-        config.apiKey = value;
-      }
+      config.apiKey = line.substring('GEMINI_API_KEY='.length).trim();
+    } else if (line.startsWith('PROMPT=')) {
+      config.prompt = line.substring('PROMPT='.length).trim();
+    } else if (line.startsWith('GEMINI_MODEL=')) {
+      config.geminiModel = line.substring('GEMINI_MODEL='.length).trim();
     }
   }
   return config;

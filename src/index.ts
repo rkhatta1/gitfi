@@ -180,8 +180,9 @@ program
       console.log(chalk.yellow('Scanning Git history for benchmark data...'));
 
       const logOutput = execSync('git log --pretty=%B').toString();
-      
-      const benchmarkRegex = /gitfi-benchmark:.*?command: (.*?)\n\s+manual_time: ([\d.]+)\n\s+gitfi_time: ([\d.]+)/gs;
+      console.log(chalk.blue(`Log Output: ${logOutput}`));
+       
+      const benchmarkRegex = /gitfi-benchmark:\n\s*command: (.*?)\n\s*manual_time: ([\d.]+)\n\s*gitfi_time: ([\d.]+)/g;
       
       let match;
       const benchmarks = [];
@@ -210,8 +211,15 @@ program
       console.log(`Total Estimated Manual Time: ${chalk.yellow(totalManualTime.toFixed(2))} seconds`);
       console.log(`Total Time with gitfi:       ${chalk.yellow(totalGitfiTime.toFixed(2))} seconds`);
       
+      if (totalTimeSaved >= 0) {
       console.log(chalk.green(`\nTotal Time Saved: ${chalk.bold.green(totalTimeSaved.toFixed(2))} seconds`));
       console.log(`Average Time Saved per Commit: ${chalk.bold.green(averageTimeSaved.toFixed(2))} seconds`);
+      } else {
+        const timeLost = Math.abs(totalTimeSaved);
+        const avgTimeLost = Math.abs(averageTimeSaved);
+        console.log(chalk.yellow(`\nTotal Time Saved by manual commits: ${chalk.bold.green(timeLost.toFixed(2))} seconds`));
+        console.log(`Average Time Saved per manual commit: ${chalk.bold.green(avgTimeLost.toFixed(2))} seconds`);
+      }
       console.log(chalk.gray('\n----------------------------------'));
 
     } catch (error) {

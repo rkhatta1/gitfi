@@ -77,7 +77,7 @@ program
           const endTime = Date.now();
           const gitfiTime = ((endTime - startTime) / 1000) + 2.5;
           const manualTime = getManualTime();
-          finalCommitMessage += `\n\n---\ngitfi-benchmark:\ncommand: gitfi g -m\nmanual_time: ${manualTime.toFixed(2)}\ngitfi_time: ${gitfiTime.toFixed(2)}\n---`;
+          finalCommitMessage += `\n\n---\ngitfi-benchmark:\ncommand: gitfi c -m\nmanual_time: ${manualTime.toFixed(2)}\ngitfi_time: ${gitfiTime.toFixed(2)}\n---`;
         }
         execSync(`git commit -m " ${finalCommitMessage}"`, { stdio: 'inherit' });
       } catch (error) {

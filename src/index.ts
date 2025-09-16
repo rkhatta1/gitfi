@@ -77,7 +77,7 @@ program
           const endTime = Date.now();
           const gitfiTime = ((endTime - startTime) / 1000) + 2.5;
           const manualTime = getManualTime();
-          finalCommitMessage += `\n\n---\ngitfi-benchmark:\ncommand: gitfi g -m\nmanual_time: ${manualTime.toFixed(2)}\ngitfi_time: ${gitfiTime.toFixed(2)}\n\n---`;
+          finalCommitMessage += `\n\n---\ngitfi-benchmark:\ncommand: gitfi g -m\nmanual_time: ${manualTime.toFixed(2)}\ngitfi_time: ${gitfiTime.toFixed(2)}\n---`;
         }
         execSync(`git commit -m " ${finalCommitMessage}"`, { stdio: 'inherit' });
       } catch (error) {
@@ -158,7 +158,7 @@ program
         
           const originalMessage = execSync('git log -1 --pretty=%B').toString();
 
-          const finalCommitMessageWithMetrics = `${originalMessage.trim()}\n\n---\ngitfi-benchmark:\ncommand: gitfi g -m\nmanual_time: ${manualTime.toFixed(2)}\ngitfi_time: ${gitfiTime.toFixed(2)}\n\n---`;
+          const finalCommitMessageWithMetrics = `${originalMessage.trim()}\n\n---\ngitfi-benchmark:\ncommand: gitfi g -m\nmanual_time: ${manualTime.toFixed(2)}\ngitfi_time: ${gitfiTime.toFixed(2)}\n---`;
 
         execSync(`git commit --amend -m "${finalCommitMessageWithMetrics}"`);
         console.log(chalk.green('✓ Metrics added successfully!'));
@@ -181,7 +181,7 @@ program
 
       const logOutput = execSync('git log --pretty=%B').toString();
       
-      const benchmarkRegex = /gitfi-benchmark:\n\s+command: (.*?)\n\s+manual_time: (.*?)\n\s+gitfi_time: (.*)/g;
+      const benchmarkRegex = /gitfi-benchmark:\n\s+command: (.*?)\n\s+manual_time: ([\d.]+)\n\s+gitfi_time: ([\d.]+)/g;
       
       let match;
       const benchmarks = [];
@@ -215,7 +215,7 @@ program
       console.log(chalk.gray('\n----------------------------------'));
 
     } catch (error) {
-      console.error(chalk.red(`Error generating report: ${error instanceof Error ? error.message : 'Unknown error'}`));
+      console.error(chalk.red(`Error generating report: ${error instanceof Error ? error.message : 'Unknown error'      }`));
       process.exit(1);
     }
   });

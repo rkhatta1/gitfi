@@ -14,6 +14,8 @@
 
 -----
 
+Testing something
+
 ```gitfi``` is a simple command-line tool that uses Google's Gemini to automatically generate a descriptive commit message based on your staged Git changes.
 
 ## Installation

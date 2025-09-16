@@ -14,8 +14,6 @@
 
 -----
 
-Testing something
-
 ```gitfi``` is a simple command-line tool that uses Google's Gemini to automatically generate a descriptive commit message based on your staged Git changes.
 
 ## Installation
@@ -72,3 +70,17 @@ gitfi commit
 # or the alias
 gitfi c
 ```
+## See How Much Time You're Saving
+
+`gitfi` can track how much time it saves you.
+
+1.  **Collect Data:** Use the `--metric` (or `-m`) flag with your commands. The performance data will be automatically and discreetly added to the commit message.
+    ```bash
+    gitfi commit --metric
+    gitfi g -m
+    ```
+
+2.  **View Your Report:** At any time, run the `report` command to see an aggregated summary of your time savings for the current repository.
+    ```bash
+    gitfi report
+    ```

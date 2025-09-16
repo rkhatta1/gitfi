@@ -104,6 +104,8 @@ program
           return;
         }
 
+        const manualTime = options.metric ? getManualTime() : 0;
+
         console.log(chalk.yellow('Sending diff to AI for generating the commit message... 🤖'))
         const initialCommitMessage = await generateMessageFromDiff(diff);
 
@@ -153,7 +155,6 @@ program
           const endTime = Number(commitTimestamp) * 1000;
 
           const gitfiTime = ((endTime - startTime) / 1000) + 2.5;
-          const manualTime = getManualTime();
         
           const originalMessage = execSync('git log -1 --pretty=%B').toString();
 

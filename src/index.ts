@@ -49,7 +49,7 @@ program
     .alias('c')
     .description('Runs in hook mode to generate a commit message for a file.')
     .action(async () => {
-      const startTime = performance.now();
+      const startTime = Date.now();
       const options = program.opts();
 
       try {
@@ -72,7 +72,7 @@ program
         let finalCommitMessage = commitMessage;
         
         if (options.metric) {
-          const endTime = performance.now();
+          const endTime = Date.now();
           const gitfiTime = ((endTime - startTime) / 1000) + 2.5;
           const manualTime = getManualTime();
           finalCommitMessage += `\n\n---\ngitfi-benchmark:\ncommand: gitfi g -m\nmanual_time: ${manualTime.toFixed(2)}\ngitfi_time: ${gitfiTime.toFixed(2)}\n\n---`;
@@ -90,7 +90,7 @@ program
     .alias('g')
     .description('Generate a commit message interactively, straight in the terminal.')
     .action(async () => {
-      const startTime = performance.now();
+      const startTime = Date.now();
       const options = program.opts();
 
       try {

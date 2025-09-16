@@ -1,6 +1,6 @@
 {
   "name": "gitfi",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "type": "module",
   "description": "An AI powered cli to generate/automate (better) git commit messages.",
   "main": "dist/index.js",

@@ -159,6 +159,8 @@ program
 
         execSync(`git commit --amend -m "${finalCommitMessageWithMetrics}"`);
         console.log(chalk.green('✓ Metrics added successfully!'));
+        console.log(chalk.yellow(`Start Time: ${startTime}\nEnd Time: ${endTime}\nGitfi Time: ${gitfiTime}`));
+        
         }
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred.';

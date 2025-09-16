@@ -107,7 +107,7 @@ program
 
         console.log(chalk.green('\n✓ AI-generated commit message:'));
         console.log(chalk.gray('---------------------------------'));
-        console.log(commitMessage);
+        console.log(initialCommitMessage);
         console.log(chalk.gray('---------------------------------'));
 
         const { action } = await inquirer.prompt([
@@ -124,29 +124,25 @@ program
           },
         ]);
 
-        switch (action) {
-          case "commit":
-            execSync(`git commit -m "${initialCommitMessage}" --no-verify`, { stdio: 'inherit' });
+        if (action === 'cancel') {
+          console.log(chalk.red('Cancelled commit.'));
+          return;
+        }
+      
+        // Perform the initial commit
+        if (action === 'commit') {
+          execSync(`git commit -m "${initialCommitMessage}"`, { stdio: 'inherit' });
+          console.log(chalk.green('✓ Changes committed successfully!'));
+        } else if (action === 'edit') {
+          const tempFilePath = join(tmpdir(), `gitfi-commit-msg.txt`);
+          writeFileSync(tempFilePath, initialCommitMessage);
+          try {
+            execSync(`git commit --template ${tempFilePath}`, { stdio: 'inherit' });
+          } finally {
+            unlinkSync(tempFilePath);
             console.log(chalk.green('✓ Changes committed successfully!'));
-            break;
-          case "edit":
-            const tempFilepath = join(tmpdir(), `gitfi-commit-msg.txt`);
-            writeFileSync(tempFilepath, initialCommitMessage);
-            
-            console.log(chalk.yellow('Save and Close the file to commit with the edited commit message.'))
-            try {
-              execSync(`git commit --template ${tempFilepath}`, { stdio: 'inherit' });
-            } finally {
-              unlinkSync(tempFilepath);
-            }
-            console.log(chalk.green('✓ Changes committed successfully!'));
-            break;
-          case "cancel":
-            console.log(chalk.red('Cancelled commit.'));
-            break;
-
-          default:
-            break;
+          }
+        }
 
         if (options.metric) {
           console.log(chalk.yellow('\nAmending commit to add performance metrics...'));
@@ -164,7 +160,7 @@ program
         execSync(`git commit --amend -m "${finalCommitMessageWithMetrics}"`);
         console.log(chalk.green('✓ Metrics added successfully!'));
         }
-      } catch (error) {
+    } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred.';
         console.error(chalk.red(`Error: ${errorMessage}`));
         process.exit(1);

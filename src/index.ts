@@ -22,6 +22,8 @@ function getManualTime(): number {
     const totalLines = linesAdded + linesDeleted;
     const hunks = execSync('git diff --shortstat HEAD').toString().split('\n').length;
     const tCognitive = (totalLines * 0.2) + (filesChanged * 5) + (hunks * 2);
+    console.log(chalk.blue(`\nTotal Lines: ${totalLines}\nFiles Changed: ${filesChanged}\nHunks: ${hunks}\n`));
+    
     return T_BASE + tCognitive;
   } catch (error) {
     console.warn('Could not calculate diff for manual time, using base time only.');

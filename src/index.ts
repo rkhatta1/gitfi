@@ -181,7 +181,7 @@ program
 
       const logOutput = execSync('git log --pretty=%B').toString();
       
-      const benchmarkRegex = /gitfi-benchmark:\n\s+command: (.*?)\n\s+manual_time: ([\d.]+)\n\s+gitfi_time: ([\d.]+)/g;
+      const benchmarkRegex = /gitfi-benchmark:.*?command: (.*?)\n\s+manual_time: ([\d.]+)\n\s+gitfi_time: ([\d.]+)/gs;
       
       let match;
       const benchmarks = [];
